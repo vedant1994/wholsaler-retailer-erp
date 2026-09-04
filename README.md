@@ -69,10 +69,11 @@ Ensure you have the following installed on your machine:
 - **Python 3.10+** (`python --version`)
 - **Git** (`git --version`)
 
-### 2. Clone / Open Repository
-Navigate into the project directory:
+### 2. Clone the Repository
+Clone the repository to your local machine:
 ```bash
-cd c:/Users/BAPS/OneDrive/Django_Invoice_genrater
+git clone https://github.com/yourusername/Django_Invoice_genrater.git
+cd Django_Invoice_genrater
 ```
 
 ### 3. Create & Activate Virtual Environment
