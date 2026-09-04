@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+
+{% block title %}E-Invoice Generator | Smart B2B & Retail Invoicing Ecosystem{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <span class="hero-badge">
+          <i class="bi bi-stars"></i> Next-Gen Invoicing & QR Payload Verification
+        </span>
+        <h1 class="hero-title">
+          Smart <span class="text-gradient">E-Invoicing Ecosystem</span> for Wholesalers & Retail Merchants
+        </h1>
+        <p class="hero-subtitle">
+          Streamline bulk supply transactions, retail checkouts, automated GST calculations, and instant digital QR verification in one unified enterprise platform.
+        </p>
+        <div class="d-flex flex-wrap gap-3">
+          <a href="{% url 'invoices:register' %}" class="btn btn-primary-custom">
+            <i class="bi bi-person-plus me-2"></i>Get Started Free
+          </a>
+          <a href="{% url 'invoices:verify_invoice' %}" class="btn btn-secondary-custom">
+            <i class="bi bi-qr-code-scan me-2"></i>Verify E-Invoice QR
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="glass-card position-relative overflow-hidden p-4">
+          <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+            <div class="d-flex align-items-center gap-3">
+              <div class="icon-box mb-0" style="width: 44px; height: 44px; font-size: 1.2rem;">
+                <i class="bi bi-receipt-cutoff"></i>
+              </div>
+              <div>
+                <h6 class="fw-bold mb-0">E-Invoice #INV-2026-9042</h6>
+                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">Verified & Encrypted</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-subtle p-3 rounded-3 mb-3">
+            <div class="d-flex justify-content-between small mb-2">
+              <span class="text-muted">Wholesaler:</span>
+              <span class="fw-semibold">National Traders Pvt Ltd</span>
+            </div>
+            <div class="d-flex justify-content-between small mb-2">
+              <span class="text-muted">Registered Store:</span>
+              <span class="fw-semibold">Apex Supermart</span>
+            </div>
+            <div class="d-flex justify-content-between small mb-2">
+              <span class="text-muted">GSTIN:</span>
+              <span class="fw-semibold">27AAAAA0000A1Z5</span>
+            </div>
+            <div class="d-flex justify-content-between small">
+              <span class="text-muted">Total Payable:</span>
+              <span class="fw-bold text-primary fs-6">₹48,250.00</span>
+            </div>
+          </div>
+
+          <div class="text-center p-3 border border-dashed rounded-3 bg-white">
+            <i class="bi bi-qr-code text-dark" style="font-size: 4rem;"></i>
+            <p class="small text-muted mb-0 mt-1"><i class="bi bi-patch-check-fill text-primary me-1"></i> Scan with any camera to verify payload</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Animated Stats Banner -->
+<div class="container">
+  <div class="stats-banner">
+    <div class="row g-4 align-items-center">
+      <div class="col-md-3 col-6">
+        <div class="stat-item">
+          <div class="stat-number" data-target="15000" data-suffix="+">15,000+</div>
+          <div class="stat-label">Invoices Created</div>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="stat-item">
+          <div class="stat-number" data-target="99.9" data-suffix="%" data-decimals="1">99.9%</div>
+          <div class="stat-label">QR Payload Accuracy</div>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="stat-item">
+          <div class="stat-number" data-target="850" data-suffix="+">850+</div>
+          <div class="stat-label">Merchants & Wholesalers</div>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="stat-item">
+          <div class="stat-number" data-target="0.3" data-suffix="s" data-decimals="1">&lt;0.3s</div>
+          <div class="stat-label">Generation Speed</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Role Selector Cards (Wholesalers & Shopkeepers) -->
+<section class="py-5">
+  <div class="container">
+    <div class="text-center max-w-700 mx-auto mb-5">
+      <span class="badge bg-primary-subtle text-primary fw-bold px-3 py-2 rounded-pill mb-2">Tailored Workflows</span>
+      <h2 class="fw-bold display-6">Designed for Every Business Tier</h2>
+      <p class="text-muted">Choose your business account type to access specialized billing features.</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+      <!-- Wholesaler Card -->
+      <div class="col-lg-5 col-md-6">
+        <div class="glass-card h-100 p-4 border border-2 border-primary-subtle">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="icon-box icon-box-purple mb-0">
+              <i class="bi bi-building"></i>
+            </div>
+            <div>
+              <span class="badge bg-purple-subtle text-purple border border-purple-subtle rounded-pill small">Wholesale Network</span>
+              <h4 class="fw-bold mb-0">Wholesalers & Distributors</h4>
+            </div>
+          </div>
+          <p class="text-muted mb-4">
+            Manage merchant store networks, issue bulk supply invoices, track GST compliance across retail partners, and access multi-store sales analytics.
+          </p>
+          <ul class="list-unstyled text-muted small mb-4">
+            <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Multi-shop distribution mapping</li>
+            <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Bulk B2B electronic invoice generation</li>
+            <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Consolidated GST reporting & exports</li>
+          </ul>
+          <a href="{% url 'invoices:register_wholesaler' %}" class="btn btn-primary-custom w-100">
+            <i class="bi bi-building-add me-2"></i>Register as Wholesaler
+          </a>
+        </div>
+      </div>
+
+      <!-- Shopkeeper Card -->
+      <div class="col-lg-5 col-md-6">
+        <div class="glass-card h-100 p-4 border border-2 border-info-subtle">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="icon-box icon-box-accent mb-0">
+              <i class="bi bi-shop"></i>
+            </div>
+            <div>
+              <span class="badge bg-info-subtle text-info border border-info-subtle rounded-pill small">Retail Billing</span>
+              <h4 class="fw-bold mb-0">Shopkeepers & Retailers</h4>
+            </div>
+          </div>
+          <p class="text-muted mb-4">
+            Rapid customer billing, itemized product catalogs, instant thermal & PDF printing, and dynamic QR verification for retail stores.
+          </p>
+          <ul class="list-unstyled text-muted small mb-4">
+            <li class="mb-2"><i class="bi bi-check-circle-fill text-accent me-2"></i>Instant 1-click product catalog billing</li>
+            <li class="mb-2"><i class="bi bi-check-circle-fill text-accent me-2"></i>Embedded scannable QR verification</li>
+            <li class="mb-2"><i class="bi bi-check-circle-fill text-accent me-2"></i>Thermal POS & standard A4 print output</li>
+          </ul>
+          <a href="{% url 'invoices:register_shopkeeper' %}" class="btn btn-secondary-custom w-100">
+            <i class="bi bi-shop-window me-2"></i>Register as Shopkeeper
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Core Platform Features Matrix -->
+<section id="features" class="py-5 bg-white border-top border-bottom">
+  <div class="container py-3">
+    <div class="row align-items-end mb-5">
+      <div class="col-lg-7">
+        <span class="badge bg-info-subtle text-info fw-bold px-3 py-2 rounded-pill mb-2">Powerful Capabilities</span>
+        <h2 class="fw-bold display-6">Everything You Need for Compliant Billing</h2>
+      </div>
+      <div class="col-lg-5 text-lg-end">
+        <p class="text-muted mb-0">Built with enterprise-grade Django standards and 256-bit cryptographic security.</p>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3">
+        <div class="p-4 rounded-4 border bg-subtle h-100 transition-all hover-shadow">
+          <div class="fs-1 text-primary mb-3"><i class="bi bi-qr-code-scan"></i></div>
+          <h5 class="fw-bold">Cryptographic QR</h5>
+          <p class="text-muted small mb-0">Every invoice generates a tamper-evident QR code encoding seller, customer, and tax payload.</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="p-4 rounded-4 border bg-subtle h-100 transition-all hover-shadow">
+          <div class="fs-1 text-accent mb-3"><i class="bi bi-calculator"></i></div>
+          <h5 class="fw-bold">Automated GST</h5>
+          <p class="text-muted small mb-0">Fixed-decimal precision calculation for CGST, SGST, IGST, and itemized subtotal amounts.</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="p-4 rounded-4 border bg-subtle h-100 transition-all hover-shadow">
+          <div class="fs-1 text-success mb-3"><i class="bi bi-printer"></i></div>
+          <h5 class="fw-bold">Thermal & PDF Print</h5>
+          <p class="text-muted small mb-0">Export clean, print-ready PDF invoices tailored for standard A4 or thermal receipt printers.</p>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <div class="p-4 rounded-4 border bg-subtle h-100 transition-all hover-shadow">
+          <div class="fs-1 text-warning mb-3"><i class="bi bi-shield-check"></i></div>
+          <h5 class="fw-bold">Role-Based Security</h5>
+          <p class="text-muted small mb-0">Multi-tenant security protecting shopkeeper and wholesaler profile data with CSRF & XSS defense.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Step-by-Step Workflow -->
+<section id="how-it-works" class="py-5">
+  <div class="container py-3">
+    <div class="text-center max-w-700 mx-auto mb-5">
+      <span class="badge bg-success-subtle text-success fw-bold px-3 py-2 rounded-pill mb-2">4-Step Workflow</span>
+      <h2 class="fw-bold display-6">How E-Invoice Generator Works</h2>
+      <p class="text-muted">Start creating verified electronic invoices in under 2 minutes.</p>
+    </div>
+
+    <div class="timeline-grid">
+      <div class="timeline-card">
+        <div class="step-badge">1</div>
+        <h5 class="fw-bold mb-2">Register Account</h5>
+        <p class="text-muted small mb-0">Select your profile type (Wholesaler or Shopkeeper) and input business GST details.</p>
+      </div>
+
+      <div class="timeline-card">
+        <div class="step-badge">2</div>
+        <h5 class="fw-bold mb-2">Add Products</h5>
+        <p class="text-muted small mb-0">Set up your product catalog with unit pricing for quick 1-click selection.</p>
+      </div>
+
+      <div class="timeline-card">
+        <div class="step-badge">3</div>
+        <h5 class="fw-bold mb-2">Issue Invoice</h5>
+        <p class="text-muted small mb-0">Enter customer details, select products, and let the system calculate totals and tax.</p>
+      </div>
+
+      <div class="timeline-card">
+        <div class="step-badge">4</div>
+        <h5 class="fw-bold mb-2">Scan & Verify</h5>
+        <p class="text-muted small mb-0">Scan the generated QR code or search invoice number online to confirm authenticity.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action Banner -->
+<section class="py-5">
+  <div class="container">
+    <div class="cta-card">
+      <h2 class="fw-bold display-5 mb-3">Ready to Modernize Your Business Billing?</h2>
+      <p class="lead mb-4 text-white-50 max-w-600 mx-auto">
+        Join hundreds of verified wholesalers and merchants issuing tamper-proof e-invoices today.
+      </p>
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <a href="{% url 'invoices:register' %}" class="btn btn-light btn-lg font-weight-bold px-4 rounded-3 text-dark">
+          <i class="bi bi-person-plus me-2"></i>Create Free Account
+        </a>
+        <a href="{% url 'invoices:features' %}" class="btn btn-outline-light btn-lg px-4 rounded-3">
+          <i class="bi bi-info-circle me-2"></i>Explore Features
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

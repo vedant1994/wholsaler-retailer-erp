@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Retailer List | E-Invoice Generator{% endblock %}
+
+{% block content %}
+<section class="py-5" style="background: radial-gradient(circle at 50% 0%, rgba(79, 70, 229, 0.06) 0%, rgba(6, 182, 212, 0.03) 50%, transparent 80%); min-height: 80vh;">
+  <div class="container py-3">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h3 class="fw-bold mb-1">Retailer List</h3>
+        <p class="text-muted small mb-0">Manage and view all retailers in your network.</p>
+      </div>
+      <a href="{% url 'invoices:create_shopkeeper' %}" class="btn btn-primary-custom">
+        <i class="bi bi-plus-lg me-1"></i> Add Retailer
+      </a>
+    </div>
+
+    <div class="glass-card p-4">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th scope="col">Shop Name</th>
+              <th scope="col">Phone</th>
+              <th scope="col">GST Number</th>
+              <th scope="col">Address</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for retailer in shops %}
+            <tr>
+              <td class="fw-medium">{{ retailer.shop_name }}</td>
+              <td>{{ retailer.phone|default:"N/A" }}</td>
+              <td>{{ retailer.gst_number|default:"N/A" }}</td>
+              <td>{{ retailer.address|default:"N/A" }}</td>
+              <td>
+                {% if retailer.approval_status == 'APPROVED' %}
+                  <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">Approved</span>
+                {% elif retailer.approval_status == 'PENDING' %}
+                  <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill">Pending</span>
+                {% else %}
+                  <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill">{{ retailer.approval_status }}</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" class="text-center py-4 text-muted">
+                <div class="mb-3">
+                  <i class="bi bi-shop text-secondary" style="font-size: 2.5rem;"></i>
+                </div>
+                <h5>No retailers found</h5>
+                <p class="small mb-0">You haven't added any retailers to your network yet.</p>
+                <a href="{% url 'invoices:create_shopkeeper' %}" class="btn btn-sm btn-outline-primary mt-3">Add your first retailer</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

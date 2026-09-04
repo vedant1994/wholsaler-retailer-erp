@@ -1,0 +1,32 @@
+# Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+
+# Database & Storage
+*.sqlite3
+*.db
+db.sqlite3-journal
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+
+# Media Uploads & Temp Files
+InvoiceGenrater/media/*
+!InvoiceGenrater/media/.gitkeep
+InvoiceGenrater/static/cache/
+
+# IDE & OS Junk
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log

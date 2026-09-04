@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block title %}Add Stock | E-Invoice Generator{% endblock %}
+
+{% block content %}
+<section class="py-5" style="background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.06) 0%, rgba(6, 182, 212, 0.03) 50%, transparent 80%); min-height: 80vh;">
+  <div class="container py-3">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        
+        <div class="mb-3">
+          <a href="{% url 'invoices:stock_list' %}" class="btn btn-sm btn-outline-secondary rounded-pill">
+            <i class="bi bi-arrow-left me-1"></i> Back to Stock List
+          </a>
+        </div>
+
+        <div class="glass-card p-4 p-md-5">
+          <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
+            <div class="icon-box mb-0 bg-success-subtle text-success" style="width: 52px; height: 52px; font-size: 1.5rem;">
+              <i class="bi bi-box-seam"></i>
+            </div>
+            <div>
+              <h3 class="fw-bold mb-0">Add New Product</h3>
+              <p class="text-muted small mb-0">Add a new item to your wholesale central inventory.</p>
+            </div>
+          </div>
+
+          <form method="post" action="{% url 'invoices:add_stock' %}" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger rounded-3 mb-4">
+                <ul class="mb-0">
+                  {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+            <h5 class="fw-bold mb-3 text-primary">Product Details</h5>
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <label class="form-label fw-medium">Product Name <span class="text-danger">*</span></label>
+                {{ form.product_name }}
+                {% if form.product_name.errors %}
+                  <div class="text-danger small mt-1">{{ form.product_name.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-medium">Description</label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                  <div class="text-danger small mt-1">{{ form.description.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-medium">Product Code <span class="text-danger">*</span></label>
+                {{ form.product_code }}
+                {% if form.product_code.errors %}
+                  <div class="text-danger small mt-1">{{ form.product_code.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-medium">Category <span class="text-danger">*</span></label>
+                {{ form.category }}
+                {% if form.category.errors %}
+                  <div class="text-danger small mt-1">{{ form.category.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-medium">Brand <span class="text-danger">*</span></label>
+                {{ form.brand }}
+                {% if form.brand.errors %}
+                  <div class="text-danger small mt-1">{{ form.brand.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-medium">Supplier <span class="text-danger">*</span></label>
+                {{ form.supplier }}
+                {% if form.supplier.errors %}
+                  <div class="text-danger small mt-1">{{ form.supplier.errors.0 }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <hr class="border-secondary opacity-25 my-4">
+
+            <h5 class="fw-bold mb-3 text-success">Pricing & Inventory</h5>
+            <div class="row g-3 mb-4">
+              
+              <!-- Purchase Prices -->
+              <div class="col-md-4">
+                <label class="form-label fw-medium">Purchase Price (Total) <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text">₹</span>
+                  {{ form.purchase_price }}
+                </div>
+                {% if form.purchase_price.errors %}
+                  <div class="text-danger small mt-1">{{ form.purchase_price.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-medium text-muted">Purchase Price (Per Unit) <i class="bi bi-calculator ms-1"></i></label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light text-muted">₹</span>
+                  <input type="text" class="form-control bg-light text-muted" id="calc-purchase-price" value="0.00" disabled readonly>
+                </div>
+              </div>
+              
+              <!-- Selling Prices -->
+              <div class="col-md-4">
+                <label class="form-label fw-medium">Selling Price (Total) <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text">₹</span>
+                  {{ form.selling_price }}
+                </div>
+                {% if form.selling_price.errors %}
+                  <div class="text-danger small mt-1">{{ form.selling_price.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-medium text-muted">Selling Price (Per Unit) <i class="bi bi-calculator ms-1"></i></label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light text-muted">₹</span>
+                  <input type="text" class="form-control bg-light text-muted" id="calc-selling-price" value="0.00" disabled readonly>
+                </div>
+              </div>
+
+              <!-- MRP and GST -->
+              <div class="col-md-4">
+                <label class="form-label fw-medium">MRP (per unit) <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text">₹</span>
+                  {{ form.mrp_per_unit }}
+                </div>
+                {% if form.mrp_per_unit.errors %}
+                  <div class="text-danger small mt-1">{{ form.mrp_per_unit.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-medium">GST (%) <span class="text-danger">*</span></label>
+                {{ form.gst }}
+                {% if form.gst.errors %}
+                  <div class="text-danger small mt-1">{{ form.gst.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              <!-- Quantity and Units -->
+              <div class="col-md-4">
+                <label class="form-label fw-medium">No. of Boxes (Initial Qty) <span class="text-danger">*</span></label>
+                {{ form.quantity }}
+                {% if form.quantity.errors %}
+                  <div class="text-danger small mt-1">{{ form.quantity.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-medium">Units per Box <span class="text-danger">*</span></label>
+                {{ form.units_per_box }}
+                {% if form.units_per_box.errors %}
+                  <div class="text-danger small mt-1">{{ form.units_per_box.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-medium text-muted">Total Units <i class="bi bi-calculator ms-1"></i></label>
+                <input type="text" class="form-control bg-light text-muted" id="calc-total-units" value="0" disabled readonly>
+              </div>
+
+              <!-- Min Stock, Batch, Dates -->
+              <div class="col-md-4">
+                <label class="form-label fw-medium">Min Stock Level <span class="text-danger">*</span></label>
+                {{ form.minimum_stock_level }}
+                {% if form.minimum_stock_level.errors %}
+                  <div class="text-danger small mt-1">{{ form.minimum_stock_level.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-medium">Batch Number <span class="text-danger">*</span></label>
+                {{ form.batch_number }}
+                {% if form.batch_number.errors %}
+                  <div class="text-danger small mt-1">{{ form.batch_number.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-medium">Manufacturing Date</label>
+                {{ form.manufacturing_date }}
+                {% if form.manufacturing_date.errors %}
+                  <div class="text-danger small mt-1">{{ form.manufacturing_date.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-medium">Expiry Date <span class="text-danger">*</span></label>
+                {{ form.expiry_date }}
+                {% if form.expiry_date.errors %}
+                  <div class="text-danger small mt-1">{{ form.expiry_date.errors.0 }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <hr class="border-secondary opacity-25 my-4">
+
+            <h5 class="fw-bold mb-3 text-info">Warehouse & Purchase</h5>
+            <div class="row g-3 mb-4">
+              <div class="col-md-4">
+                <label class="form-label fw-medium">Warehouse</label>
+                {{ form.warehouse }}
+                {% if form.warehouse.errors %}
+                  <div class="text-danger small mt-1">{{ form.warehouse.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-medium">Purchase Invoice Number</label>
+                {{ form.purchase_invoice_number }}
+                {% if form.purchase_invoice_number.errors %}
+                  <div class="text-danger small mt-1">{{ form.purchase_invoice_number.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-medium">Purchase Date</label>
+                {{ form.purchase_date }}
+                {% if form.purchase_date.errors %}
+                  <div class="text-danger small mt-1">{{ form.purchase_date.errors.0 }}</div>
+                {% endif %}
+              </div>
+            </div>
+            
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-primary-custom btn-lg py-3">
+                <i class="bi bi-plus-circle me-1"></i> Add Product to Inventory
+              </button>
+            </div>
+            
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const qtyInput = document.querySelector('input[name="quantity"]');
+    const unitsInput = document.querySelector('input[name="units_per_box"]');
+    const purchaseInput = document.querySelector('input[name="purchase_price"]');
+    const sellingInput = document.querySelector('input[name="selling_price"]');
+    
+    const totalUnitsEl = document.getElementById('calc-total-units');
+    const purchasePriceEl = document.getElementById('calc-purchase-price');
+    const sellingPriceEl = document.getElementById('calc-selling-price');
+
+    function updateCalculations() {
+      const qty = parseFloat(qtyInput.value) || 0;
+      const units = parseFloat(unitsInput.value) || 0;
+      const purchase = parseFloat(purchaseInput.value) || 0;
+      const selling = parseFloat(sellingInput.value) || 0;
+
+      const totalUnits = qty * units;
+      totalUnitsEl.value = totalUnits;
+
+      if (totalUnits > 0) {
+        purchasePriceEl.value = (purchase / totalUnits).toFixed(2);
+        sellingPriceEl.value = (selling / totalUnits).toFixed(2);
+      } else {
+        purchasePriceEl.value = '0.00';
+        sellingPriceEl.value = '0.00';
+      }
+    }
+
+    // Add event listeners to trigger recalculation when user types
+    [qtyInput, unitsInput, purchaseInput, sellingInput].forEach(input => {
+      if(input) {
+        input.addEventListener('input', updateCalculations);
+      }
+    });
+  });
+</script>
+{% endblock %}

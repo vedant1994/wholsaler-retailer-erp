@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Contact & Help Support | E-Invoice Generator{% endblock %}
+
+{% block content %}
+<section class="py-5" style="background: radial-gradient(circle at 50% 0%, rgba(79, 70, 229, 0.06) 0%, rgba(6, 182, 212, 0.03) 50%, transparent 80%);">
+  <div class="container py-3">
+    <div class="text-center max-w-700 mx-auto mb-5">
+      <span class="badge bg-primary-subtle text-primary fw-bold px-3 py-2 rounded-pill mb-2">We're Here to Help</span>
+      <h1 class="fw-bold display-5">Get in Touch with Our Support Team</h1>
+      <p class="text-muted">Have questions about shop registration, QR verification, or wholesaler networks? Send us a message.</p>
+    </div>
+
+    <div class="row g-5">
+      <!-- Contact Form -->
+      <div class="col-lg-7">
+        <div class="glass-card p-4 p-md-5">
+          <h4 class="fw-bold mb-4"><i class="bi bi-envelope me-2 text-primary"></i>Send Us a Message</h4>
+          <form method="post" action="{% url 'invoices:contact' %}" novalidate>
+            {% csrf_token %}
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold small">Full Name *</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light text-muted"><i class="bi bi-person"></i></span>
+                  <input type="text" name="name" class="form-control" placeholder="John Doe" required>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold small">Email Address *</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light text-muted"><i class="bi bi-envelope"></i></span>
+                  <input type="email" name="email" class="form-control" placeholder="john@example.com" required>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label fw-semibold small">Subject</label>
+                <input type="text" name="subject" class="form-control" placeholder="e.g. Question about GST verification">
+              </div>
+
+              <div class="col-12">
+                <label class="form-label fw-semibold small">Message *</label>
+                <textarea name="message" class="form-control" rows="4" placeholder="Type your inquiry here..." required></textarea>
+              </div>
+
+              <div class="col-12 pt-2">
+                <button type="submit" class="btn btn-primary-custom w-100 py-2">
+                  <i class="bi bi-send me-2"></i>Submit Message
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Quick Info Cards -->
+      <div class="col-lg-5">
+        <div class="d-flex flex-column gap-4">
+          <div class="glass-card p-4">
+            <div class="d-flex align-items-center gap-3">
+              <div class="icon-box mb-0"><i class="bi bi-headset"></i></div>
+              <div>
+                <h6 class="fw-bold mb-1">Customer Support Helpdesk</h6>
+                <p class="text-muted small mb-0">support@einvoicegen.com<br>+91 (800) 123-4567</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card p-4">
+            <div class="d-flex align-items-center gap-3">
+              <div class="icon-box icon-box-accent mb-0"><i class="bi bi-geo-alt"></i></div>
+              <div>
+                <h6 class="fw-bold mb-1">Corporate Office</h6>
+                <p class="text-muted small mb-0">Suite 402, Financial Tech Park<br>Mumbai, MH 400001</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card p-4">
+            <div class="d-flex align-items-center gap-3">
+              <div class="icon-box icon-box-purple mb-0"><i class="bi bi-shield-check"></i></div>
+              <div>
+                <h6 class="fw-bold mb-1">System Operational Status</h6>
+                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1">
+                  <i class="bi bi-check-circle-fill me-1"></i> All Services 99.99% Operational
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

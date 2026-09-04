@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Platform Features | E-Invoice Generator System{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section py-5">
+  <div class="container text-center max-w-800 mx-auto">
+    <span class="badge bg-primary-subtle text-primary fw-bold px-3 py-2 rounded-pill mb-3">
+      <i class="bi bi-stars me-1"></i> Enterprise Capabilities
+    </span>
+    <h1 class="display-4 fw-extrabold mb-3">
+      Engineered for <span class="text-gradient">Precision, Speed & Compliance</span>
+    </h1>
+    <p class="lead text-muted mb-4">
+      Discover how E-InvoiceGen simplifies bulk supply billing for wholesalers and rapid point-of-sale checkouts for retail merchants.
+    </p>
+    <div class="d-flex justify-content-center gap-3">
+      <a href="{% url 'invoices:register' %}" class="btn btn-primary-custom">Get Started Now</a>
+      <a href="#comparison" class="btn btn-secondary-custom">Compare Solutions</a>
+    </div>
+  </div>
+</section>
+
+<!-- Detailed Features Grid -->
+<section class="py-5 bg-white border-top border-bottom">
+  <div class="container">
+    <div class="row g-4">
+      <!-- Feature 1 -->
+      <div class="col-md-6 col-lg-4">
+        <div class="glass-card h-100 p-4">
+          <div class="icon-box mb-3"><i class="bi bi-qr-code-scan"></i></div>
+          <h4 class="fw-bold mb-2">Cryptographic QR Verification</h4>
+          <p class="text-muted small mb-0">
+            Generates unique scannable QR payloads encoding invoice number, GSTIN, amount, and timestamp for instant authenticity check.
+          </p>
+        </div>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="col-md-6 col-lg-4">
+        <div class="glass-card h-100 p-4">
+          <div class="icon-box icon-box-accent mb-3"><i class="bi bi-calculator"></i></div>
+          <h4 class="fw-bold mb-2">Automated GST Precision</h4>
+          <p class="text-muted small mb-0">
+            Fixed-decimal arithmetic engine computes CGST, SGST, IGST, item subtotals, and total discounts with zero rounding error.
+          </p>
+        </div>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="col-md-6 col-lg-4">
+        <div class="glass-card h-100 p-4">
+          <div class="icon-box icon-box-purple mb-3"><i class="bi bi-diagram-3"></i></div>
+          <h4 class="fw-bold mb-2">Wholesaler & Merchant Roles</h4>
+          <p class="text-muted small mb-0">
+            Dedicated profiles for distributors managing retail store networks and shopkeepers handling customer sales.
+          </p>
+        </div>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="col-md-6 col-lg-4">
+        <div class="glass-card h-100 p-4">
+          <div class="icon-box mb-3"><i class="bi bi-printer"></i></div>
+          <h4 class="fw-bold mb-2">Thermal POS & A4 PDF Output</h4>
+          <p class="text-muted small mb-0">
+            Clean, print-optimized invoice templates tailored for standard A4 desktop printers or receipt thermal printers.
+          </p>
+        </div>
+      </div>
+
+      <!-- Feature 5 -->
+      <div class="col-md-6 col-lg-4">
+        <div class="glass-card h-100 p-4">
+          <div class="icon-box icon-box-accent mb-3"><i class="bi bi-shield-lock"></i></div>
+          <h4 class="fw-bold mb-2">Enterprise Security Guard</h4>
+          <p class="text-muted small mb-0">
+            Equipped with CSRF defense, XSS browser filtering, frame denial against clickjacking, and PBKDF2 password hashing.
+          </p>
+        </div>
+      </div>
+
+      <!-- Feature 6 -->
+      <div class="col-md-6 col-lg-4">
+        <div class="glass-card h-100 p-4">
+          <div class="icon-box icon-box-purple mb-3"><i class="bi bi-speedometer2"></i></div>
+          <h4 class="fw-bold mb-2">Real-Time Business Analytics</h4>
+          <p class="text-muted small mb-0">
+            Interactive dashboard metrics tracking revenue, total invoice count, and recent store activity in real time.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Comparison Table -->
+<section id="comparison" class="py-5">
+  <div class="container">
+    <div class="text-center max-w-700 mx-auto mb-5">
+      <span class="badge bg-success-subtle text-success fw-bold px-3 py-2 rounded-pill mb-2">Why Upgrade?</span>
+      <h2 class="fw-bold display-6">Paper Billing vs E-InvoiceGen</h2>
+    </div>
+
+    <div class="glass-card p-4">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th style="width: 40%;">Feature / Capability</th>
+              <th style="width: 30%;" class="text-center">Traditional Paper Invoicing</th>
+              <th style="width: 30%;" class="text-center text-primary fw-bold">E-InvoiceGen Engine</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="fw-bold">Authenticity Verification</td>
+              <td class="text-center text-danger"><i class="bi bi-x-circle me-1"></i> Vulnerable to fake bills</td>
+              <td class="text-center text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i> Cryptographic QR Payload</td>
+            </tr>
+            <tr>
+              <td class="fw-bold">Tax Calculation Accuracy</td>
+              <td class="text-center text-danger"><i class="bi bi-x-circle me-1"></i> Manual calculation errors</td>
+              <td class="text-center text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i> Automated Fixed Decimal</td>
+            </tr>
+            <tr>
+              <td class="fw-bold">Generation Speed</td>
+              <td class="text-center text-muted">2 - 5 Minutes per bill</td>
+              <td class="text-center text-primary fw-bold"><i class="bi bi-lightning-charge me-1"></i> Under 10 Seconds</td>
+            </tr>
+            <tr>
+              <td class="fw-bold">Multi-Store & Wholesaler Support</td>
+              <td class="text-center text-danger"><i class="bi bi-x-circle me-1"></i> Disconnected registers</td>
+              <td class="text-center text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i> Unified B2B Network</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-5">
+  <div class="container">
+    <div class="cta-card">
+      <h2 class="fw-bold display-5 mb-3">Upgrade Your Store Billing Infrastructure</h2>
+      <p class="lead mb-4 text-white-50 max-w-600 mx-auto">Create your merchant or wholesaler profile today.</p>
+      <a href="{% url 'invoices:register' %}" class="btn btn-light btn-lg text-dark font-weight-bold px-4 rounded-3">
+        Register Free Profile
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

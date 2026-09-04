@@ -1,0 +1,11 @@
+# Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+
+# Local Database & Secrets
+db.sqlite3
+.env
+
+# Media Uploads
+media/*
+!media/.gitkeep

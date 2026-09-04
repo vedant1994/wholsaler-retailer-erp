@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Shop Dashboard | E-Invoice Generator{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  
+  <!-- Dashboard Welcome Banner -->
+  <div class="glass-card mb-4 border-0 bg-primary text-white p-4" style="background: linear-gradient(135deg, var(--primary) 0%, #3730a3 100%);">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        {% if role == 'wholesaler' %}
+          <span class="badge bg-white-50 text-white px-3 py-1 rounded-pill small mb-2">
+            <i class="bi bi-building me-1"></i> {{ wholesaler.approval_status }} WHOLESALER
+          </span>
+          <h2 class="fw-bold mb-1">{{ wholesaler.wholesaler_name }} Dashboard</h2>
+          <p class="mb-0 text-white-50 small">
+            <i class="bi bi-geo-alt me-1"></i> {{ wholesaler.address }} | 
+            <i class="bi bi-card-heading me-1 ms-2"></i> GST: {{ wholesaler.gst_number|default:"Not Provided" }}
+          </p>
+        {% else %}
+          <span class="badge bg-white-50 text-white px-3 py-1 rounded-pill small mb-2">
+            <i class="bi bi-shop me-1"></i> {{ shop.approval_status }} STORE
+          </span>
+          <h2 class="fw-bold mb-1">{{ shop.shop_name }} Dashboard</h2>
+          <p class="mb-0 text-white-50 small">
+            <i class="bi bi-geo-alt me-1"></i> {{ shop.address }} | 
+            <i class="bi bi-card-heading me-1 ms-2"></i> GST: {{ shop.gst_number|default:"Not Provided" }}
+          </p>
+        {% endif %}
+      </div>
+      <div class="col-md-4 text-md-end mt-3 mt-md-0">
+        <div class="d-flex flex-wrap gap-2 justify-content-md-end">
+          {% if role == 'wholesaler' %}
+            <a href="{% url 'invoices:create_shopkeeper' %}" class="btn btn-warning text-dark fw-bold btn-sm rounded-3">
+              <i class="bi bi-person-plus me-1"></i> Add Shopkeeper
+            </a>
+          {% endif %}
+          <a href="{% url 'invoices:verify_invoice' %}" class="btn btn-light text-dark fw-bold btn-sm rounded-3">
+            <i class="bi bi-qr-code-scan me-1"></i> Verify QR
+          </a>
+          <a href="{% url 'invoices:about' %}" class="btn btn-outline-light btn-sm rounded-3">
+            <i class="bi bi-info-circle me-1"></i> Help Guide
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Metrics Grid -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="glass-card p-3 d-flex align-items-center gap-3">
+        <div class="icon-box mb-0" style="width: 50px; height: 50px; font-size: 1.4rem;">
+          <i class="bi bi-receipt"></i>
+        </div>
+        <div>
+          <h3 class="fw-bold mb-0">{{ total_invoices }}</h3>
+          <span class="text-muted small">Total Invoices Created</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="glass-card p-3 d-flex align-items-center gap-3">
+        <div class="icon-box icon-box-accent mb-0" style="width: 50px; height: 50px; font-size: 1.4rem;">
+          <i class="bi bi-shield-check"></i>
+        </div>
+        <div>
+          <h3 class="fw-bold mb-0 text-success">
+            {% if role == 'wholesaler' %}{{ wholesaler.approval_status }}{% else %}{{ shop.approval_status }}{% endif %}
+          </h3>
+          <span class="text-muted small">Account Approval Status</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="glass-card p-3 d-flex align-items-center gap-3">
+        <div class="icon-box icon-box-purple mb-0" style="width: 50px; height: 50px; font-size: 1.4rem;">
+          <i class="bi bi-telephone"></i>
+        </div>
+        <div>
+          <h5 class="fw-bold mb-0 text-truncate" style="max-width: 180px;">
+            {% if role == 'wholesaler' %}{{ wholesaler.phone|default:"No Phone" }}{% else %}{{ shop.phone|default:"No Phone" }}{% endif %}
+          </h5>
+          <span class="text-muted small">Registered Phone</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Invoices Table Section -->
+  <div class="glass-card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="fw-bold mb-0"><i class="bi bi-clock-history me-2 text-primary"></i>Recent Invoices</h5>
+    </div>
+
+    {% if invoices %}
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Invoice Number</th>
+              <th>Customer Name</th>
+              <th>Total Amount</th>
+              <th>Created Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for invoice in invoices %}
+            <tr>
+              <td class="fw-bold text-primary">#{{ invoice.Invoice_number }}</td>
+              <td>{{ invoice.customer_name }}</td>
+              <td class="fw-semibold">₹{{ invoice.total_amount }}</td>
+              <td class="text-muted small">{{ invoice.created_at|date:"M d, Y H:i" }}</td>
+              <td>
+                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">
+                  <i class="bi bi-qr-code me-1"></i> Verified
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="text-center py-5">
+        <div class="icon-box mx-auto mb-3" style="width: 60px; height: 60px; font-size: 1.75rem;">
+          <i class="bi bi-file-earmark-plus"></i>
+        </div>
+        <h5 class="fw-bold mb-1">No Invoices Created Yet</h5>
+        <p class="text-muted small max-w-500 mx-auto mb-3">Your shop is ready to generate verified e-invoices with QR codes.</p>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

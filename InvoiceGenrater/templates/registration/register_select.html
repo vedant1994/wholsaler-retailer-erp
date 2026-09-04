@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Register As | E-Invoice Generator{% endblock %}
+
+{% block content %}
+<section class="py-5" style="background: radial-gradient(circle at 50% 10%, rgba(79, 70, 229, 0.06) 0%, rgba(6, 182, 212, 0.03) 50%, transparent 80%); min-height: 75vh; display: flex; align-items: center;">
+  <div class="container">
+    <div class="row justify-content-center text-center">
+      <div class="col-lg-8">
+        
+        <h2>Register As</h2>
+
+        <div class="row g-4 mt-3">
+          <!-- Wholesaler Registration Option -->
+          <div class="col-md-6">
+            <div class="glass-card shadow-lg p-4 p-md-5 h-100 d-flex flex-column justify-content-between text-center hover-shadow transition-all border border-primary-subtle">
+              <div>
+                <div class="icon-box mx-auto mb-3" style="width: 70px; height: 70px; font-size: 2rem; background: linear-gradient(135deg, rgba(79, 70, 229, 0.15) 0%, rgba(6, 182, 212, 0.15) 100%); color: #4f46e5;">
+                  <i class="bi bi-building"></i>
+                </div>
+                <h4 class="fw-bold mb-2">Wholesaler</h4>
+                <p class="text-muted small mb-4">Register as a bulk distributor or wholesaler supplier to manage large-scale invoice generation and distribution.</p>
+              </div>
+
+              <a href="{% url 'invoices:register_wholesaler' %}" class="btn btn-primary-custom py-2.5 px-4 rounded-3 w-100 fw-semibold">
+                Register as Wholesaler
+              </a>
+            </div>
+          </div>
+
+          <!-- Shopkeeper Registration Option -->
+          <div class="col-md-6">
+            <div class="glass-card shadow-lg p-4 p-md-5 h-100 d-flex flex-column justify-content-between text-center hover-shadow transition-all border border-info-subtle">
+              <div>
+                <div class="icon-box mx-auto mb-3" style="width: 70px; height: 70px; font-size: 2rem; background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%); color: #06b6d4;">
+                  <i class="bi bi-shop"></i>
+                </div>
+                <h4 class="fw-bold mb-2">Shopkeeper</h4>
+                <p class="text-muted small mb-4">Register as a retail store or shop owner to generate instant, QR-verified e-invoices for customers.</p>
+              </div>
+
+              <a href="{% url 'invoices:register_shopkeeper' %}" class="btn btn-secondary-custom py-2.5 px-4 rounded-3 w-100 fw-semibold">
+                Register as Shopkeeper
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-2">
+          <p class="small text-muted mb-0">
+            Already have an account? 
+            <a href="{% url 'invoices:login' %}" class="fw-bold text-primary text-decoration-none ms-1">Log In Here</a>
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
