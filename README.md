@@ -20,6 +20,16 @@ An enterprise-ready, responsive, and secure Web Application built using **Django
 
 ---
 
+## Screenshots
+
+> **Note:** Add your UI screenshots here!
+> 
+> *Example:*
+> `![Dashboard Screenshot](path/to/dashboard.png)`
+> `![Invoice Generation](path/to/invoice.png)`
+
+---
+
 ## Tech Stack
 
 - **Backend**: Python 3.10+, Django 6.1
