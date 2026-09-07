@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Invoice History | E-Invoice Generator{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold text-dark mb-0"><i class="bi bi-clock-history me-2 text-primary"></i>Invoice History</h3>
+    <a href="{% url 'invoices:create_invoice' %}" class="btn btn-primary fw-bold rounded-pill px-4">
+      <i class="bi bi-plus-lg me-1"></i> New Invoice
+    </a>
+  </div>
+
+  <div class="glass-card p-4">
+    {% if invoices %}
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Invoice Number</th>
+              <th>Customer Name</th>
+              <th>Total Amount</th>
+              <th>Created Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for invoice in invoices %}
+            <tr>
+              <td class="fw-bold text-primary">#{{ invoice.Invoice_number }}</td>
+              <td>{{ invoice.customer_name }}</td>
+              <td class="fw-semibold">₹{{ invoice.total_amount }}</td>
+              <td class="text-muted small">{{ invoice.created_at|date:"M d, Y H:i" }}</td>
+              <td>
+                <a href="{% url 'invoices:verify_invoice_num' invoice.Invoice_number %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                  <i class="bi bi-eye me-1"></i> View
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="text-center py-5">
+        <div class="icon-box mx-auto mb-3" style="width: 60px; height: 60px; font-size: 1.75rem;">
+          <i class="bi bi-file-earmark-x"></i>
+        </div>
+        <h5 class="fw-bold mb-1">No Invoices Found</h5>
+        <p class="text-muted small max-w-500 mx-auto mb-3">You haven't generated any invoices yet.</p>
+        <a href="{% url 'invoices:create_invoice' %}" class="btn btn-primary btn-sm rounded-pill px-4 mt-2">
+          Create First Invoice
+        </a>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

@@ -21,6 +21,8 @@ urlpatterns = [
     path("retailers/", views.retailer_list, name="retailer_list"),
     path("stock/", views.stock_list, name="stock_list"),
     path("stock/add/", views.add_stock, name="add_stock"),
+    path("products/", views.product_list, name="product_list"),
+    path("products/add/", views.add_product, name="add_product"),
+    path("invoice/create/", views.create_invoice, name="create_invoice"),
+    path("invoice/history/", views.invoice_history, name="invoice_history"),
 ]
-
-

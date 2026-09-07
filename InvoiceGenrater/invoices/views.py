@@ -3,8 +3,10 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import ShopRegistrationForm, WholesalerRegistrationForm, ShopkeeperCreationForm, StockForm
-from .models import WholesalerProfile, Invoice, Product, Stockforwholesaler
+from .forms import ShopRegistrationForm, WholesalerRegistrationForm, ShopkeeperCreationForm, StockForm, InvoiceForm, InvoiceItemFormSet, ProductForm
+from .models import WholesalerProfile, Invoice, Product, Stockforwholesaler, InvoiceItem
+import json
+import time
 
 def home(request):
     return render(request, "invoices/home.html")
@@ -226,3 +228,160 @@ def add_stock(request):
             "form": form,
         }
     )
+
+@login_required
+def create_invoice(request):
+    if not hasattr(request.user, 'shopprofile'):
+        messages.error(request, "Only shopkeepers can create invoices.")
+        return redirect("invoices:dashboard")
+
+    shop = request.user.shopprofile
+    products = Product.objects.filter(shop=shop)
+    
+    # Create product dictionary for JS auto-fill
+    product_data = {}
+    for p in products:
+        product_data[p.id] = {
+            'name': p.name,
+            'price': float(p.base_price),
+            'gst': float(p.gst_percent),
+            'stock': p.stock_quantity
+        }
+    
+    if request.method == "POST":
+        form = InvoiceForm(request.POST)
+        formset = InvoiceItemFormSet(request.POST, prefix='items')
+        
+        if form.is_valid() and formset.is_valid():
+            # Check stock quantities first
+            stock_error = False
+            for inline_form in formset:
+                if inline_form.cleaned_data and not inline_form.cleaned_data.get('DELETE', False):
+                    product = inline_form.cleaned_data.get('product')
+                    qty = inline_form.cleaned_data.get('quantity')
+                    if not product:
+                        continue
+                    if product.shop != shop:
+                        inline_form.add_error('product', 'Invalid product.')
+                        stock_error = True
+                    elif qty > product.stock_quantity:
+                        inline_form.add_error('quantity', f"Only {product.stock_quantity} in stock.")
+                        stock_error = True
+            
+            if not stock_error:
+                invoice = form.save(commit=False)
+                invoice.shop = shop
+                invoice.Invoice_number = f"INV-{int(time.time())}-{shop.id}"
+                
+                # We need to save the invoice to get an ID for the formset
+                invoice.save()
+                
+                subtotal = 0
+                total_gst = 0
+                total_discount = 0
+                total_amount = 0
+                
+                instances = formset.save(commit=False)
+                for item in instances:
+                    item.invoice = invoice
+                    item.price_per_unit = item.product.base_price
+                    item.gst_percent = item.product.gst_percent
+                    
+                    item_subtotal = item.quantity * item.price_per_unit
+                    item_gst_amount = item_subtotal * (item.gst_percent / 100)
+                    item_discount = item.discount or 0
+                    
+                    item.total_price = item_subtotal + item_gst_amount - item_discount
+                    item.save()
+                    
+                    # Deduct stock
+                    item.product.stock_quantity -= item.quantity
+                    item.product.save()
+                    
+                    subtotal += item_subtotal
+                    total_gst += item_gst_amount
+                    total_discount += item_discount
+                    total_amount += item.total_price
+                
+                # Update invoice totals
+                invoice.subtotal = subtotal
+                invoice.gst_amount = total_gst
+                invoice.discount = total_discount
+                invoice.total_amount = total_amount
+                invoice.save()
+                
+                messages.success(request, f"Invoice {invoice.Invoice_number} created successfully!")
+                return redirect("invoices:dashboard")
+            else:
+                messages.error(request, "Please fix the inventory errors below.")
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = InvoiceForm()
+        formset = InvoiceItemFormSet(queryset=InvoiceItem.objects.none(), prefix='items')
+
+    # We only want to show the shop's products in the formset dropdowns
+    for inline_form in formset:
+        inline_form.fields['product'].queryset = products
+
+    return render(request, "invoices/create_invoice.html", {
+        'form': form,
+        'formset': formset,
+        'product_data_json': json.dumps(product_data),
+    })
+
+
+@login_required
+def product_list(request):
+    if hasattr(request.user, 'shopprofile'):
+        shop = request.user.shopprofile
+        products = Product.objects.filter(shop=shop)
+        context = {'products': products, 'role': 'shopkeeper', 'shop': shop}
+    elif hasattr(request.user, 'wholesalerprofile'):
+        wholesaler = request.user.wholesalerprofile
+        shops = wholesaler.shops.all()
+        products = Product.objects.filter(shop__in=shops)
+        context = {'products': products, 'role': 'wholesaler', 'wholesaler': wholesaler}
+    else:
+        messages.error(request, 'Profile not found.')
+        return redirect('invoices:dashboard')
+    
+    return render(request, 'invoices/product_list.html', context)
+
+@login_required
+def add_product(request):
+    if not hasattr(request.user, 'shopprofile'):
+        messages.error(request, 'Only shopkeepers can add products.')
+        return redirect('invoices:dashboard')
+    
+    shop = request.user.shopprofile
+    
+    if request.method == 'POST':
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            product = form.save(commit=False)
+            product.shop = shop
+            product.save()
+            messages.success(request, f'Product {product.name} added successfully.')
+            return redirect('invoices:product_list')
+    else:
+        form = ProductForm()
+    
+    return render(request, 'invoices/add_product.html', {'form': form})
+
+@login_required
+def invoice_history(request):
+    if hasattr(request.user, 'shopprofile'):
+        shop = request.user.shopprofile
+        invoices = Invoice.objects.filter(shop=shop).order_by('-created_at')
+        context = {'invoices': invoices, 'role': 'shopkeeper', 'shop': shop}
+    elif hasattr(request.user, 'wholesalerprofile'):
+        wholesaler = request.user.wholesalerprofile
+        shops = wholesaler.shops.all()
+        invoices = Invoice.objects.filter(shop__in=shops).order_by('-created_at')
+        context = {'invoices': invoices, 'role': 'wholesaler', 'wholesaler': wholesaler}
+    else:
+        messages.error(request, 'Profile not found.')
+        return redirect('invoices:dashboard')
+    
+    return render(request, 'invoices/invoice_history.html', context)

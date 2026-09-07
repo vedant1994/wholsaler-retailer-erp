@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Invoice #{{ invoice.Invoice_number }} | Print{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Advanced Professional Invoice Styles */
+  .invoice-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 3rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    color: #333;
+  }
+
+  .invoice-header {
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .invoice-brand {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .invoice-badge {
+    background-color: var(--primary);
+    color: white;
+    padding: 0.4rem 1.2rem;
+    font-size: 0.9rem;
+    border-radius: 50px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .details-box {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    height: 100%;
+  }
+
+  .table-invoice {
+    width: 100%;
+    margin-bottom: 2rem;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .table-invoice th {
+    background-color: #f1f5f9;
+    color: #475569;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    padding: 1rem;
+    border-bottom: 2px solid #cbd5e1;
+  }
+
+  .table-invoice td {
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: middle;
+  }
+
+  .table-invoice tr:last-child td {
+    border-bottom: none;
+  }
+
+  .summary-box {
+    background-color: #f8fafc;
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid #e2e8f0;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+    font-size: 1.05rem;
+  }
+
+  .summary-row.total {
+    border-top: 2px dashed #cbd5e1;
+    padding-top: 1rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--primary);
+  }
+
+  .watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    font-size: 8rem;
+    color: rgba(0, 0, 0, 0.03);
+    font-weight: 900;
+    z-index: 0;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .qr-code-placeholder {
+    width: 120px;
+    height: 120px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    padding: 5px;
+  }
+
+  /* --- PRINT MEDIA QUERIES --- */
+  @media print {
+    @page {
+      size: A4;
+      margin: 0; /* Removes browser headers and footers */
+    }
+    body {
+      background: white !important;
+      padding: 1.5cm !important; /* Re-adds padding for content */
+    }
+    .app-sidebar, .app-topbar, .alert, .print-hide, .mobile-sidebar-toggle {
+      display: none !important;
+    }
+    .app-layout {
+      display: block !important;
+    }
+    .app-main {
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    .main-content {
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+    .invoice-container {
+      box-shadow: none !important;
+      padding: 0 !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+      border: none !important;
+    }
+    /* Force background colors to print */
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    /* Ensure page breaks don't happen inside rows */
+    tr {
+      page-break-inside: avoid;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Top Action Bar (Hidden when printing) -->
+<div class="d-flex justify-content-between align-items-center mb-4 print-hide">
+  <a href="{% url 'invoices:dashboard' %}" class="btn btn-outline-secondary rounded-pill px-4">
+    <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+  </a>
+  <button onclick="window.print()" class="btn btn-primary rounded-pill px-4 shadow-sm" style="background: linear-gradient(135deg, var(--primary) 0%, #3730a3 100%); border: none;">
+    <i class="bi bi-printer me-2"></i>Print / Save PDF
+  </button>
+</div>
+
+<!-- INVOICE DOCUMENT -->
+<div class="invoice-container position-relative overflow-hidden">
+  <div class="watermark">{{ shop.shop_name }}</div>
+  
+  <div class="position-relative" style="z-index: 1;">
+    <!-- HEADER -->
+    <div class="invoice-header d-flex justify-content-between align-items-center">
+      <div>
+        <div class="invoice-brand mb-1">{{ shop.shop_name }}</div>
+        <div class="text-secondary mb-0"><i class="bi bi-geo-alt-fill me-1 text-primary"></i> {{ shop.address }}</div>
+        {% if shop.phone %}<div class="text-secondary"><i class="bi bi-telephone-fill me-1 text-primary"></i> {{ shop.phone }}</div>{% endif %}
+        {% if shop.gst_number %}<div class="text-secondary mt-1"><span class="fw-bold text-dark">GSTIN:</span> {{ shop.gst_number }}</div>{% endif %}
+      </div>
+      <div class="text-end">
+        <div class="invoice-badge mb-2 d-inline-block">TAX INVOICE</div>
+        <h4 class="fw-bold mb-0 text-dark">#{{ invoice.Invoice_number }}</h4>
+        <div class="text-muted small">Date: {{ invoice.created_at|date:"d M Y, h:i A" }}</div>
+      </div>
+    </div>
+
+    <!-- DETAILS SECTION -->
+    <div class="row g-4 mb-4">
+      <!-- Billed To -->
+      <div class="col-sm-6">
+        <div class="details-box">
+          <h6 class="text-uppercase text-muted fw-bold mb-3" style="font-size: 0.8rem; letter-spacing: 1px;">Billed To:</h6>
+          <h5 class="fw-bold mb-1 text-dark">{{ invoice.customer_name }}</h5>
+          {% if invoice.customer_phone %}<p class="mb-1 text-secondary"><i class="bi bi-telephone me-2"></i>{{ invoice.customer_phone }}</p>{% endif %}
+          {% if invoice.customer_address %}<p class="mb-0 text-secondary"><i class="bi bi-geo-alt me-2"></i>{{ invoice.customer_address }}</p>{% endif %}
+        </div>
+      </div>
+      
+      <!-- Payment & Verify -->
+      <div class="col-sm-6">
+        <div class="details-box d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="text-uppercase text-muted fw-bold mb-3" style="font-size: 0.8rem; letter-spacing: 1px;">Payment Status:</h6>
+            {% if invoice.payment_status == 'PAID' %}
+              <h4 class="fw-bold text-success mb-0"><i class="bi bi-check-circle-fill me-2"></i>PAID</h4>
+            {% elif invoice.payment_status == 'PARTIAL' %}
+              <h4 class="fw-bold text-warning mb-0"><i class="bi bi-dash-circle-fill me-2"></i>PARTIAL</h4>
+            {% else %}
+              <h4 class="fw-bold text-danger mb-0"><i class="bi bi-x-circle-fill me-2"></i>UNPAID</h4>
+            {% endif %}
+          </div>
+          <div class="text-center">
+            <!-- Simulated QR Code for Verification -->
+            <div class="qr-code-placeholder mb-2">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ request.scheme }}://{{ request.get_host }}{% url 'invoices:verify_invoice_num' invoice.Invoice_number %}" alt="Verify QR" class="img-fluid">
+            </div>
+            <span class="small text-muted fw-semibold">Scan to Verify</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ITEMS TABLE -->
+    <table class="table-invoice">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Item Description</th>
+          <th class="text-center">Qty</th>
+          <th class="text-end">Price</th>
+          <th class="text-end">GST</th>
+          <th class="text-end">Discount</th>
+          <th class="text-end">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td class="text-muted">{{ forloop.counter }}</td>
+          <td>
+            <div class="fw-bold text-dark">{{ item.product.name }}</div>
+            {% if item.product.product_code %}<div class="small text-muted">Code: {{ item.product.product_code }}</div>{% endif %}
+          </td>
+          <td class="text-center fw-semibold">{{ item.quantity }}</td>
+          <td class="text-end">₹{{ item.price_per_unit }}</td>
+          <td class="text-end">{{ item.gst_percent }}%</td>
+          <td class="text-end">₹{{ item.discount }}</td>
+          <td class="text-end fw-bold text-dark">₹{{ item.total_price }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- SUMMARY SECTION -->
+    <div class="row">
+      <div class="col-sm-6">
+        <p class="text-muted mt-2">
+          <strong>Terms & Conditions:</strong><br>
+          1. Goods once sold will not be taken back.<br>
+          2. Subject to local jurisdiction.<br>
+          3. This is a computer generated invoice.
+        </p>
+      </div>
+      <div class="col-sm-6">
+        <div class="summary-box">
+          <div class="summary-row">
+            <span class="text-muted">Subtotal:</span>
+            <span class="fw-semibold">₹{{ invoice.subtotal }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="text-muted">Total GST:</span>
+            <span class="fw-semibold text-success">+ ₹{{ invoice.gst_amount }}</span>
+          </div>
+          {% if invoice.discount > 0 %}
+          <div class="summary-row">
+            <span class="text-muted">Total Discount:</span>
+            <span class="fw-semibold text-danger">- ₹{{ invoice.discount }}</span>
+          </div>
+          {% endif %}
+          <div class="summary-row total">
+            <span>Grand Total:</span>
+            <span>₹{{ invoice.total_amount }}</span>
+          </div>
+        </div>
+        
+        <div class="text-end mt-5 pt-3">
+          <div style="border-top: 1px solid #cbd5e1; width: 200px; display: inline-block; padding-top: 0.5rem;" class="text-muted text-center fw-semibold">
+            Authorized Signatory
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+{% endblock %}

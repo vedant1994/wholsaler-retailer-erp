@@ -123,6 +123,8 @@ class Product(models.Model):
     shop = models.ForeignKey(ShopProfile, on_delete=models.CASCADE)
     name = models.CharField(max_length=150)
     base_price = models.DecimalField(max_digits=10, decimal_places=2)
+    gst_percent = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    stock_quantity = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -131,8 +133,27 @@ class Invoice(models.Model):
     shop = models.ForeignKey(ShopProfile, on_delete=models.CASCADE)
     Invoice_number = models.CharField(max_length=30, unique=True)
     customer_name = models.CharField(max_length=150)
-    total_amount = models.DecimalField(max_digits=12, decimal_places=2)
+    customer_phone = models.CharField(max_length=15, blank=True, null=True)
+    customer_address = models.TextField(blank=True, null=True)
+    payment_status = models.CharField(max_length=20, default='Unpaid')
+    
+    subtotal = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    gst_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    discount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    total_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.Invoice_number
+
+class InvoiceItem(models.Model):
+    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='items')
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    quantity = models.IntegerField(default=1)
+    price_per_unit = models.DecimalField(max_digits=10, decimal_places=2)
+    gst_percent = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    total_price = models.DecimalField(max_digits=12, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.invoice.Invoice_number} - {self.product.name if self.product else 'Item'}"
