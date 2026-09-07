@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create Invoice | E-Invoice Generator{% endblock %}
+
+{% block content %}
+<section class="py-5"
+  style="background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.06) 0%, rgba(6, 182, 212, 0.03) 50%, transparent 80%); min-height: 80vh;">
+  <div class="container py-3">
+
+    <div class="d-flex align-items-center justify-content-between mb-4">
+      <div>
+        <h3 class="fw-bold mb-0">Create Invoice</h3>
+        <p class="text-muted small mb-0">Generate a new invoice for your customer.</p>
+      </div>
+      <a href="{% url 'invoices:dashboard' %}" class="btn btn-sm btn-outline-secondary rounded-pill">
+        <i class="bi bi-x-lg me-1"></i> Cancel
+      </a>
+    </div>
+
+    <form method="post" action="{% url 'invoices:create_invoice' %}" id="invoiceForm">
+      {% csrf_token %}
+
+      <!-- Display form errors -->
+      {% if form.errors or formset.errors %}
+      <div class="alert alert-danger mb-4">
+        <p class="mb-1 fw-bold"><i class="bi bi-exclamation-triangle"></i> Please correct the errors below:</p>
+        <ul class="mb-0 small">
+          {% for field, errors in form.errors.items %}
+          {% for error in errors %}<li>{{ field|title }}: {{ error }}</li>{% endfor %}
+          {% endfor %}
+          {% for form_errors in formset.errors %}
+          {% for field, errors in form_errors.items %}
+          {% for error in errors %}<li>Item Row: {{ error }}</li>{% endfor %}
+          {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      <div class="row g-4">
+        <!-- Left Column: Customer & Items -->
+        <div class="col-lg-8">
+
+          <!-- Customer Details Card -->
+          <div class="glass-card p-4 mb-4">
+            <h5 class="fw-bold mb-3 text-primary"><i class="bi bi-person-lines-fill me-2"></i>Customer Details</h5>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-medium small">Customer Name <span class="text-danger">*</span></label>
+                {{ form.customer_name }}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-medium small">Phone Number</label>
+                {{ form.customer_phone }}
+              </div>
+              <div class="col-md-8">
+                <label class="form-label fw-medium small">Address</label>
+                {{ form.customer_address }}
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-medium small">Payment Status</label>
+                {{ form.payment_status }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Invoice Items Card -->
+          <div class="glass-card p-4">
+            <h5 class="fw-bold mb-3 text-primary"><i class="bi bi-cart-check me-2"></i>Invoice Items</h5>
+
+            {{ formset.management_form }}
+
+            <div class="table-responsive">
+              <table class="table table-borderless align-middle" id="itemsTable">
+                <thead class="border-bottom">
+                  <tr class="text-muted small">
+                    <th style="width: 35%;">Product</th>
+                    <th style="width: 15%;">Qty</th>
+                    <th style="width: 15%;">Price (₹)</th>
+                    <th style="width: 10%;">GST%</th>
+                    <th style="width: 15%;">Discount (₹)</th>
+                    <th style="width: 10%;">Total</th>
+                  </tr>
+                </thead>
+                <tbody id="formsetBody">
+                  {% for inline_form in formset %}
+                  <tr class="item-row border-bottom border-light">
+                    <td>
+                      {{ inline_form.product }}
+                      <div class="d-none">{{ inline_form.id }}</div>
+                    </td>
+                    <td>{{ inline_form.quantity }}</td>
+                    <td>{{ inline_form.price_per_unit }}</td>
+                    <td>{{ inline_form.gst_percent }}</td>
+                    <td>{{ inline_form.discount }}</td>
+                    <td class="fw-bold text-end row-total">0.00</td>
+                    <td class="d-none">
+                      {% if formset.can_delete %}
+                      {{ inline_form.DELETE }}
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill mt-2" id="addRowBtn">
+              <i class="bi bi-plus-circle me-1"></i> Add Another Item
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Summary -->
+        <div class="col-lg-4">
+          <div class="glass-card p-4 sticky-top" style="top: 100px;">
+            <h5 class="fw-bold mb-4"><i class="bi bi-receipt me-2"></i>Summary</h5>
+
+            <div class="d-flex justify-content-between mb-2 small">
+              <span class="text-muted">Subtotal:</span>
+              <span class="fw-medium">₹<span id="summarySubtotal">0.00</span></span>
+            </div>
+            <div class="d-flex justify-content-between mb-2 small">
+              <span class="text-muted">Total GST:</span>
+              <span class="fw-medium text-success">+ ₹<span id="summaryGST">0.00</span></span>
+            </div>
+            <div class="d-flex justify-content-between mb-3 small">
+              <span class="text-muted">Total Discount:</span>
+              <span class="fw-medium text-danger">- ₹<span id="summaryDiscount">0.00</span></span>
+            </div>
+
+            <hr class="opacity-25">
+
+            <div class="d-flex justify-content-between mb-4">
+              <span class="fw-bold fs-5">Grand Total:</span>
+              <span class="fw-bold fs-5 text-primary">₹<span id="summaryTotal">0.00</span></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary-custom w-100 py-2">
+              Generate Invoice <i class="bi bi-arrow-right ms-2"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- Product Data JSON for JS calculations -->
+{{ product_data_json|json_script:"product-data" }}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const productData = JSON.parse(document.getElementById('product-data').textContent);
+    const formsetBody = document.getElementById('formsetBody');
+    const totalFormsInput = document.getElementById('id_items-TOTAL_FORMS');
+    let formCount = parseInt(totalFormsInput.value);
+
+    // Empty form template for adding rows
+    const emptyFormHtml = `
+      <tr class="item-row border-bottom border-light">
+        <td>
+          <select name="items-__prefix__-product" class="form-select product-select" id="id_items-__prefix__-product">
+            <option value="" selected>---------</option>
+            ${Object.keys(productData).map(id => `<option value="${id}">${productData[id].name}</option>`).join('')}
+          </select>
+          <input type="hidden" name="items-__prefix__-id" id="id_items-__prefix__-id">
+        </td>
+        <td><input type="number" name="items-__prefix__-quantity" value="1" min="1" class="form-control item-quantity" id="id_items-__prefix__-quantity"></td>
+        <td><input type="number" name="items-__prefix__-price_per_unit" value="0.00" min="0" step="0.01" class="form-control item-price" id="id_items-__prefix__-price_per_unit"></td>
+        <td><input type="number" name="items-__prefix__-gst_percent" value="0" min="0" step="0.01" class="form-control item-gst" id="id_items-__prefix__-gst_percent"></td>
+        <td><input type="number" name="items-__prefix__-discount" value="0" min="0" class="form-control item-discount" id="id_items-__prefix__-discount"></td>
+        <td class="fw-bold text-end row-total">0.00</td>
+        <td class="d-none">
+          <input type="checkbox" name="items-__prefix__-DELETE" id="id_items-__prefix__-DELETE">
+        </td>
+      </tr>
+    `;
+
+    // Add new row button
+    document.getElementById('addRowBtn').addEventListener('click', function () {
+      const newRow = document.createElement('tbody');
+      newRow.innerHTML = emptyFormHtml.replace(/__prefix__/g, formCount);
+      formsetBody.appendChild(newRow.firstElementChild);
+
+      totalFormsInput.value = formCount + 1;
+      formCount++;
+    });
+
+    // Calculate totals
+    function calculateTotals() {
+      let subtotal = 0;
+      let totalGst = 0;
+      let totalDiscount = 0;
+
+      document.querySelectorAll('.item-row').forEach(row => {
+        const productSelect = row.querySelector('.product-select');
+        const quantityInput = row.querySelector('.item-quantity');
+        const discountInput = row.querySelector('.item-discount');
+        const priceDisplay = row.querySelector('.item-price');
+        const gstDisplay = row.querySelector('.item-gst');
+        const rowTotalDisplay = row.querySelector('.row-total');
+
+        const productId = productSelect ? productSelect.value : null;
+        const quantity = quantityInput ? parseFloat(quantityInput.value) || 0 : 0;
+        const discount = discountInput ? parseFloat(discountInput.value) || 0 : 0;
+
+        if (productId) {
+          // We don't overwrite price/gst here. We just read them to calculate total.
+          const price = parseFloat(priceDisplay.value) || 0;
+          const gstPercent = parseFloat(gstDisplay.value) || 0;
+
+          const itemSubtotal = price * quantity;
+          const itemGst = itemSubtotal * (gstPercent / 100);
+          const itemTotal = itemSubtotal + itemGst - discount;
+
+          if (rowTotalDisplay) rowTotalDisplay.textContent = itemTotal.toFixed(2);
+
+          subtotal += itemSubtotal;
+          totalGst += itemGst;
+          totalDiscount += discount;
+        } else {
+          if (priceDisplay) priceDisplay.value = '0.00';
+          if (gstDisplay) gstDisplay.value = '0';
+          if (rowTotalDisplay) rowTotalDisplay.textContent = '0.00';
+        }
+      });
+
+      const grandTotal = subtotal + totalGst - totalDiscount;
+
+      const elSub = document.getElementById('summarySubtotal');
+      const elGst = document.getElementById('summaryGST');
+      const elDisc = document.getElementById('summaryDiscount');
+      const elTotal = document.getElementById('summaryTotal');
+
+      if (elSub) elSub.textContent = subtotal.toFixed(2);
+      if (elGst) elGst.textContent = totalGst.toFixed(2);
+      if (elDisc) elDisc.textContent = totalDiscount.toFixed(2);
+      if (elTotal) elTotal.textContent = grandTotal.toFixed(2);
+    }
+
+    // Attach event listeners using event delegation
+    document.addEventListener('change', function (e) {
+      if (e.target.matches('.product-select')) {
+        // Auto-fill defaults for this product
+        const row = e.target.closest('tr');
+        const productId = e.target.value;
+        if (productId && productData[productId]) {
+          const priceDisplay = row.querySelector('.item-price');
+          const gstDisplay = row.querySelector('.item-gst');
+          if (priceDisplay) priceDisplay.value = productData[productId].price.toFixed(2);
+          if (gstDisplay) gstDisplay.value = productData[productId].gst;
+        }
+        calculateTotals();
+      } else if (e.target.matches('.item-quantity') || e.target.matches('.item-discount') || e.target.matches('.item-price') || e.target.matches('.item-gst')) {
+        calculateTotals();
+      }
+    });
+
+    document.addEventListener('keyup', function (e) {
+      if (e.target.matches('.item-quantity') || e.target.matches('.item-discount') || e.target.matches('.item-price') || e.target.matches('.item-gst')) {
+        calculateTotals();
+      }
+    });
+
+    // Initialize calculations on load
+    calculateTotals();
+  });
+</script>
+{% endblock %}

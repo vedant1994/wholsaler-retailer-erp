@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Add Product | E-Invoice Generator{% endblock %}
+
+{% block content %}
+<section class="py-5"
+  style="background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.06) 0%, rgba(6, 182, 212, 0.03) 50%, transparent 80%); min-height: 80vh;">
+  <div class="container py-3">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+
+        <div class="mb-3">
+          <a href="{% url 'invoices:product_list' %}" class="btn btn-sm btn-outline-secondary rounded-pill">
+            <i class="bi bi-arrow-left me-1"></i> Back to Inventory
+          </a>
+        </div>
+
+        <div class="glass-card p-4 p-md-5">
+          <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
+            <div class="icon-box mb-0 bg-success-subtle text-success"
+              style="width: 52px; height: 52px; font-size: 1.5rem;">
+              <i class="bi bi-box-seam"></i>
+            </div>
+            <div>
+              <h3 class="fw-bold mb-0">Add New Product</h3>
+              <p class="text-muted small mb-0">Add a new item to your shop's inventory.</p>
+            </div>
+          </div>
+
+          <form method="post" action="{% url 'invoices:add_product' %}" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger rounded-3 mb-4">
+              <ul class="mb-0">
+                {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+
+            <h5 class="fw-bold mb-3 text-primary">Product Details</h5>
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <label class="form-label fw-medium">Product Name <span class="text-danger">*</span></label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                <div class="text-danger small mt-1">{{ form.name.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-medium">Product Code</label>
+                {{ form.product_code }}
+                {% if form.product_code.errors %}
+                <div class="text-danger small mt-1">{{ form.product_code.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-12">
+                <label class="form-label fw-medium">Category</label>
+                {{ form.category }}
+                {% if form.category.errors %}
+                <div class="text-danger small mt-1">{{ form.category.errors.0 }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <h5 class="fw-bold mb-3 text-primary mt-4">Pricing & Stock</h5>
+            <div class="row g-3 mb-4">
+              <div class="col-md-4">
+                <label class="form-label fw-medium">Base Price (₹) <span class="text-danger">*</span></label>
+                {{ form.base_price }}
+                {% if form.base_price.errors %}
+                <div class="text-danger small mt-1">{{ form.base_price.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-medium">GST (%)</label>
+                <div class="input-group">
+                  {{ form.gst_percent }}
+                  <span class="input-group-text bg-light">%</span>
+                </div>
+                {% if form.gst_percent.errors %}
+                <div class="text-danger small mt-1">{{ form.gst_percent.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-medium">Initial Stock Quantity <span class="text-danger">*</span></label>
+                {{ form.stock_quantity }}
+                {% if form.stock_quantity.errors %}
+                <div class="text-danger small mt-1">{{ form.stock_quantity.errors.0 }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-5">
+              <a href="{% url 'invoices:product_list' %}" class="btn btn-light px-4">Cancel</a>
+              <button type="submit" class="btn btn-primary-custom px-4">
+                <i class="bi bi-check-lg me-1"></i> Save Product
+              </button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

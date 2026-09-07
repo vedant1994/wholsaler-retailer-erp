@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import ShopProfile, WholesalerProfile, UserProfile, Stockforwholesaler
+from .models import ShopProfile, WholesalerProfile, UserProfile, Stockforwholesaler, Invoice, InvoiceItem, Product
 
 class ShopRegistrationForm(forms.ModelForm):
     username = forms.CharField(
@@ -187,4 +187,44 @@ class StockForm(forms.ModelForm):
             'warehouse': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Warehouse Name/Location'}),
             'purchase_invoice_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Invoice Number'}),
             'purchase_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        }
+
+class InvoiceForm(forms.ModelForm):
+    class Meta:
+        model = Invoice
+        fields = ['customer_name', 'customer_phone', 'customer_address', 'payment_status']
+        widgets = {
+            'customer_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'customer_phone': forms.TextInput(attrs={'class': 'form-control'}),
+            'customer_address': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+            'payment_status': forms.Select(choices=[('Paid', 'Paid'), ('Unpaid', 'Unpaid')], attrs={'class': 'form-select'}),
+        }
+
+class InvoiceItemForm(forms.ModelForm):
+    class Meta:
+        model = InvoiceItem
+        fields = ['product', 'quantity', 'price_per_unit', 'gst_percent', 'discount']
+        widgets = {
+            'product': forms.Select(attrs={'class': 'form-select product-select'}),
+            'quantity': forms.NumberInput(attrs={'class': 'form-control item-quantity', 'min': 1}),
+            'price_per_unit': forms.NumberInput(attrs={'class': 'form-control item-price', 'step': '0.01', 'min': 0}),
+            'gst_percent': forms.NumberInput(attrs={'class': 'form-control item-gst', 'step': '0.01', 'min': 0}),
+            'discount': forms.NumberInput(attrs={'class': 'form-control item-discount', 'min': 0}),
+        }
+
+InvoiceItemFormSet = forms.inlineformset_factory(
+    Invoice, InvoiceItem, form=InvoiceItemForm,
+    extra=1, can_delete=True
+)
+
+
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ['name', 'base_price', 'gst_percent', 'stock_quantity']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter product name'}),
+            'base_price': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'gst_percent': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'stock_quantity': forms.NumberInput(attrs={'class': 'form-control'}),
         }

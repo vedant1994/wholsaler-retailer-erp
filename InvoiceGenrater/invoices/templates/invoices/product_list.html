@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}My Inventory | E-Invoice Generator{% endblock %}
+
+{% block content %}
+<section class="py-5"
+  style="background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.06) 0%, rgba(6, 182, 212, 0.03) 50%, transparent 80%); min-height: 80vh;">
+  <div class="container py-3">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h3 class="fw-bold mb-1">My Inventory</h3>
+        <p class="text-muted small mb-0">View and manage all products in your shop.</p>
+      </div>
+      <a href="{% url 'invoices:add_product' %}" class="btn btn-primary-custom">
+        <i class="bi bi-plus-lg me-1"></i> Add Product
+      </a>
+    </div>
+
+    <div class="glass-card p-4">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th scope="col">Product Info</th>
+              <th scope="col">Category</th>
+              <th scope="col">Base Price</th>
+              <th scope="col">GST %</th>
+              <th scope="col">Available Stock</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for product in products %}
+            <tr>
+              <td class="fw-medium">
+                <div class="d-flex align-items-center gap-2">
+                  <div class="icon-box-sm bg-success-subtle text-success rounded">
+                    <i class="bi bi-box-seam"></i>
+                  </div>
+                  <div>
+                    <div class="mb-0 fw-bold">{{ product.name }}</div>
+                    {% if product.product_code %}
+                    <small class="text-muted d-block">{{ product.product_code }}</small>
+                    {% endif %}
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="mb-0">{{ product.category|default:"-" }}</div>
+              </td>
+              <td>
+                <div class="mb-0">₹{{ product.base_price }}</div>
+              </td>
+              <td>
+                <div class="mb-0">{{ product.gst_percent }}%</div>
+              </td>
+              <td>
+                {% if product.stock_quantity <= 5 %} <span
+                  class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                  {{ product.stock_quantity }} Units (Low)
+                  </span>
+                  {% else %}
+                  <span class="badge bg-success-subtle text-success border border-success-subtle">
+                    {{ product.stock_quantity }} Units
+                  </span>
+                  {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" class="text-center py-5 text-muted">
+                <div class="mb-3">
+                  <i class="bi bi-box-seam text-secondary" style="font-size: 3rem; opacity: 0.5;"></i>
+                </div>
+                <h5>No Products Found</h5>
+                <p class="small mb-0">You have not added any items to your shop inventory yet.</p>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}
